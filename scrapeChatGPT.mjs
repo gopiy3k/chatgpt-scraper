@@ -1,9 +1,15 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
+import { createClient } from '@supabase/supabase-js';
 
 puppeteer.use(StealthPlugin());
 dotenv.config();
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 const promptToAsk = "What is Generative Engine Optimization?";
 const sessionToken = process.env.CHATGPT_SESSION;
@@ -65,10 +71,6 @@ async function waitForResponseCompletion(page) {
 
         const page = await browser.newPage();
 
-        // ✅ Recommended: Emulate real browser
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36');
-        await page.setViewport({ width: 1280, height: 800 });
-
         console.log('🍪 Injecting session token...');
         await page.setCookie({
             name: '__Secure-next-auth.session-token',
@@ -96,18 +98,34 @@ async function waitForResponseCompletion(page) {
                 await page.reload({ waitUntil: 'domcontentloaded' });
             }
         }
+
         if (!found) throw new Error("Prompt textarea never appeared.");
 
         console.log('⌨️ Typing prompt...');
         await page.type('textarea', promptToAsk, { delay: 50 });
-
         console.log('⏎ Submitting prompt...');
         await page.keyboard.press('Enter');
 
         const response = await waitForResponseCompletion(page);
 
-        console.log('\n✅ Final Response:\n');
-        console.log(response);
+        console.log('\n✅ Final Response:\n', response);
+
+        // ✅ Store in visibility_results
+        const { data, error } = await supabase.from('visibility_results').insert([
+            {
+                brand: 'Aeosignal',
+                engine: 'ChatGPT',
+                prompt: promptToAsk,
+                response: response,
+                timestamp: new Date().toISOString()
+            }
+        ]);
+
+        if (error) {
+            console.error('❌ Failed to insert into Supabase:', error.message);
+        } else {
+            console.log('📊 Stored result in visibility_results:', data);
+        }
 
     } catch (err) {
         console.error('❌ Error during scraping:', err);

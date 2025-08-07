@@ -1,0 +1,24 @@
+{
+  "name": "chatgpt-scraper",
+  "version": "1.0.0",
+  "description": "A script to scrape ChatGPT using Puppeteer.",
+  "main": "scrapeChatGPT.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node scrapeChatGPT.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "puppeteer",
+    "chatgpt",
+    "scraper"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "puppeteer": "^22.10.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

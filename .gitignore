@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Browser Session Data
+my_chrome_session/
+chrome/
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Screenshots
+*.png

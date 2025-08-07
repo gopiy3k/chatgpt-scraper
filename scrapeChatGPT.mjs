@@ -134,26 +134,27 @@ const { data, error } = await supabase.from('visibility_results').insert({
             console.log('📊 Stored result in visibility_results:', data);
         }
 
-    } catch (err) {
+     } catch (err) {
         console.error('❌ Error during scraping:', err);
     } finally {
-        if (browser) {
-            console.log('🔒 Closing browser...');
-            await browser.close();
-        }
+        // 🔒 DO NOT CLOSE browser immediately if you want to keep the container alive
+        // await browser.close(); // <-- remove or delay this
     }
-import express from 'express';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+    // ✅ Keep dummy Express server alive
+    const express = (await import('express')).default;
+
+    const app = express();
+    const PORT = process.env.PORT || 3000;
+
+    app.get('/', (req, res) => {
+      res.send('✅ Scraper ran. Nothing to see here.');
+    });
+
+    app.listen(PORT, () => {
+      console.log(`🌐 Dummy server running on port ${PORT}`);
+    });
 
 })();
 
-// Dummy web server to keep Render free-tier
-app.get('/', (req, res) => {
-  res.send('Scraper ran. Nothing to see here.');
-});
 
-app.listen(PORT, () => {
-  console.log(`🌐 Dummy server running on port ${PORT}`);
-});

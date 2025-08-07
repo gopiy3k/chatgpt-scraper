@@ -18,12 +18,10 @@ jobs:
         with:
           node-version: '22'
 
-       name: Install dependencies
+   - name: Install dependencies for Puppeteer
   run: |
     sudo apt-get update
     sudo apt-get install -y \
-      ca-certificates \
-      fonts-liberation \
       libasound2t64 \
       libatk-bridge2.0-0 \
       libatk1.0-0 \
@@ -34,7 +32,7 @@ jobs:
       libexpat1 \
       libfontconfig1 \
       libgbm1 \
-      libgcc1 \
+      libgcc-s1 \
       libgdk-pixbuf2.0-0 \
       libglib2.0-0 \
       libgtk-3-0 \
@@ -58,8 +56,7 @@ jobs:
       libxtst6 \
       lsb-release \
       wget \
-      xdg-utils \
-      --no-install-recommends
+      xdg-utils
 
       - name: Install Node dependencies
         run: npm install

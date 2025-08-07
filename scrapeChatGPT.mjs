@@ -151,8 +151,8 @@ const { data, error } = await supabase.from('visibility_results').insert({
       res.send('✅ Scraper ran. Nothing to see here.');
     });
 
-    app.listen(PORT, () => {
-      console.log(`🌐 Dummy server running on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🌐 Dummy server running on port ${PORT}`);
     });
 
 })();

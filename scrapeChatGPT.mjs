@@ -41,8 +41,13 @@ async function waitForResponseCompletion(page) {
 (async () => {
     console.log('🚀 Launching stealth browser...');
     const browser = await puppeteer.launch({
-        headless: false,
-        args: ['--start-maximized'],
+        headless: 'new', // Use the new headless mode
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Use the path from the Dockerfile
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
+        ],
     });
 
     const page = await browser.newPage();

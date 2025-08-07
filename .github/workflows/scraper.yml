@@ -1,11 +1,10 @@
 name: Daily ChatGPT Scraper
 
 on:
+  # This section needs correct indentation
   schedule:
-    # Runs at 8:00 AM IST daily (2:30 AM UTC)
-    - cron: '30 2 * * *'
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    - cron: '30 2 * * *' # Runs at 8:00 AM IST daily
+  workflow_dispatch:      # Allows manual trigger
 
 jobs:
   run-scraper:
@@ -20,7 +19,6 @@ jobs:
         with:
           node-version: '22'
 
-      # This is the correct, reliable way to install Chrome and its dependencies
       - name: Install Google Chrome
         uses: browser-actions/setup-chrome@v1
         with:
@@ -36,5 +34,4 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CHATGPT_SESSION: ${{ secrets.CHATGPT_SESSION }}
           PROMPT_TO_ASK: ${{ secrets.PROMPT_TO_ASK }}
-          # This tells Puppeteer where to find the Chrome installed by the action
           PUPPETEER_EXECUTABLE_PATH: ${{ env.CHROME_PATH }}

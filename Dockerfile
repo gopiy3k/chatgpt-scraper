@@ -64,5 +64,7 @@ COPY . .
 # Tell Puppeteer where to find the Chrome we just installed
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
+EXPOSE 3000
+
 # Run your script
 CMD [ "npm", "start" ]

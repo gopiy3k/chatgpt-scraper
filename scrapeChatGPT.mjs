@@ -110,16 +110,23 @@ async function waitForResponseCompletion(page) {
 
         console.log('\n✅ Final Response:\n', response);
 
-        // ✅ Store in visibility_results
-        const { data, error } = await supabase.from('visibility_results').insert([
-            {
-                brand: 'Aeosignal',
-                engine: 'ChatGPT',
-                prompt: promptToAsk,
-                response: response,
-                timestamp: new Date().toISOString()
-            }
-        ]);
+     // Define your prompt and brand
+const brandName = "LexiRank"; // or fetch dynamically
+const aiEngine = "chatgpt";
+
+// Check if brand is mentioned (simple check)
+const appears = response.toLowerCase().includes(brandName.toLowerCase());
+
+// Insert into visibility_results
+const { data, error } = await supabase.from('visibility_results').insert({
+  prompt: promptToAsk,
+  ai_engine: aiEngine,
+  brand: brandName,
+  appears: appears,
+  position: null, // placeholder, or extract if needed
+  raw_response: response
+});
+
 
         if (error) {
             console.error('❌ Failed to insert into Supabase:', error.message);

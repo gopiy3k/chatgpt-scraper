@@ -34,7 +34,7 @@ async function waitForResponseCompletion(page) {
                 await new Promise(r => setTimeout(r, 1000));
             }
         } catch (error) {
-            console.log(⚠️ Error while waiting:", error.message);
+            console.log("⚠️ Error while waiting:", error.message);
             break;
         }
     }

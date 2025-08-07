@@ -51,7 +51,7 @@ async function waitForResponseCompletion(page) {
     const express = (await import('express')).default;
 
     const app = express();
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 10000;
 
     app.get('/', (req, res) => {
       res.send('✅ Scraper ran. Nothing to see here.');

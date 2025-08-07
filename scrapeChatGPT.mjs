@@ -6,7 +6,7 @@ import fs from 'fs';
 puppeteer.use(StealthPlugin());
 
 dotenv.config();
-const promptToAsk = 'What is Generative Engine Optimization?';
+const promptToAsk = process.env.PROMPT_TO_ASK;
 
 // --- NEW: A robust function to wait for the response to stop changing ---
 async function waitForResponseCompletion(page) {

@@ -47,6 +47,19 @@ async function waitForResponseCompletion(page) {
 
     return lastResponseText;
 }
+ // ✅ Keep dummy Express server alive
+    const express = (await import('express')).default;
+
+    const app = express();
+    const PORT = process.env.PORT || 3000;
+
+    app.get('/', (req, res) => {
+      res.send('✅ Scraper ran. Nothing to see here.');
+    });
+
+    app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🌐 Dummy server running on port ${PORT}`);
+    });
 
 (async () => {
     if (!sessionToken || !promptToAsk) {
@@ -141,19 +154,6 @@ const { data, error } = await supabase.from('visibility_results').insert({
         // await browser.close(); // <-- remove or delay this
     }
 
-    // ✅ Keep dummy Express server alive
-    const express = (await import('express')).default;
-
-    const app = express();
-    const PORT = process.env.PORT || 3000;
-
-    app.get('/', (req, res) => {
-      res.send('✅ Scraper ran. Nothing to see here.');
-    });
-
-    app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🌐 Dummy server running on port ${PORT}`);
-    });
 
 })();
 

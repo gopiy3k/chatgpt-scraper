@@ -142,4 +142,18 @@ const { data, error } = await supabase.from('visibility_results').insert({
             await browser.close();
         }
     }
+import express from 'express';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 })();
+
+// Dummy web server to keep Render free-tier
+app.get('/', (req, res) => {
+  res.send('Scraper ran. Nothing to see here.');
+});
+
+app.listen(PORT, () => {
+  console.log(`🌐 Dummy server running on port ${PORT}`);
+});

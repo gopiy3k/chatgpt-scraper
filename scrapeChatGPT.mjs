@@ -9,8 +9,38 @@ dotenv.config();
 const promptToAsk = process.env.PROMPT_TO_ASK;
 const sessionToken = process.env.CHATGPT_SESSION;
 
-// (The waitForResponseCompletion function remains the same)
-// ...
+async function waitForResponseCompletion(page) {
+    console.log('Waiting for response to stabilize...');
+    let lastResponseText = '';
+    let stableCount = 0;
+    const requiredStableCount = 3;
+
+    while (stableCount < requiredStableCount) {
+        try {
+            const currentResponseText = await page.evaluate(() => {
+                const allMessages = Array.from(document.querySelectorAll('div[data-message-author-role="assistant"]'));
+                if (!allMessages.length) return '';
+                const lastMessage = allMessages[allMessages.length - 1];
+                return lastMessage.querySelector('.markdown')?.innerText || '';
+            });
+
+            if (currentResponseText === lastResponseText && currentResponseText !== '') {
+                stableCount++;
+            } else {
+                stableCount = 0;
+            }
+            
+            lastResponseText = currentResponseText;
+            if (stableCount < requiredStableCount) {
+                 await new Promise(r => setTimeout(r, 1000));
+            }
+        } catch (error) {
+            console.log("Error during response check, likely page closed. Exiting wait.", error.message);
+            break;
+        }
+    }
+    return lastResponseText;
+}
 
 (async () => {
     if (!sessionToken || !promptToAsk) {
@@ -38,7 +68,10 @@ const sessionToken = process.env.CHATGPT_SESSION;
             name: '__Secure-next-auth.session-token',
             value: sessionToken,
             domain: '.chatgpt.com',
-            // ... (rest of cookie properties)
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'Lax'
         });
         
         console.log('🌍 Navigating to ChatGPT...');
@@ -46,16 +79,20 @@ const sessionToken = process.env.CHATGPT_SESSION;
 
         console.log('✅ Page navigated and logged in via session token.');
 
-        // --- FINAL DIAGNOSTIC STEP: TAKE A SCREENSHOT ---
-        console.log('📸 Taking a screenshot before waiting for the selector...');
-        await page.screenshot({ path: 'debug_screenshot.png' });
-        console.log('✅ Screenshot saved to debug_screenshot.png on the server.');
-        // --- END OF DIAGNOSTIC STEP ---
-
         const promptTextareaSelector = 'textarea[data-testid="prompt-textarea"]';
         await page.waitForSelector(promptTextareaSelector, { visible: true, timeout: 60000 });
         
-        // ... (The rest of your script) ...
+        console.log('Typing prompt...');
+        await page.type(promptTextareaSelector, promptToAsk, { delay: 50 });
+
+        console.log('Submitting prompt by pressing Enter...');
+        await page.keyboard.press('Enter');
+        console.log('⏳ Prompt submitted. Waiting for response...');
+
+        const response = await waitForResponseCompletion(page);
+        
+        console.log('✅ Response finished generating.');
+        console.log('\n📥 Response:\n', response);
 
     } catch (err) {
         console.error('❌ Error during scraping:', err);

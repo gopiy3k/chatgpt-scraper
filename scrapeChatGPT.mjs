@@ -75,9 +75,8 @@ async function waitForResponseCompletion(page) {
         console.log('Typing prompt...');
         await page.type(promptTextareaSelector, promptToAsk, { delay: 50 });
 
-        const sendButtonSelector = 'button[data-testid="send-button"]';
-        await page.waitForSelector(sendButtonSelector, { visible: true });
-        await page.click(sendButtonSelector);
+  console.log('Submitting prompt by pressing Enter...');
+        await page.keyboard.press('Enter');
         console.log('⏳ Prompt submitted. Waiting for response...');
 
         const response = await waitForResponseCompletion(page);

@@ -34,7 +34,7 @@ async function waitForResponseCompletion(page) {
                 await new Promise(r => setTimeout(r, 1000));
             }
         } catch (error) {
-            console.log("⚠️ Error while waiting:", error.message);
+            console.log(⚠️ Error while waiting:", error.message);
             break;
         }
     }
@@ -65,6 +65,10 @@ async function waitForResponseCompletion(page) {
 
         const page = await browser.newPage();
 
+        // ✅ Recommended: Emulate real browser
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36');
+        await page.setViewport({ width: 1280, height: 800 });
+
         console.log('🍪 Injecting session token...');
         await page.setCookie({
             name: '__Secure-next-auth.session-token',
@@ -81,11 +85,21 @@ async function waitForResponseCompletion(page) {
 
         console.log('✅ Logged in and page loaded.');
 
-        const promptTextareaSelector = 'textarea[data-testid="prompt-textarea"]';
-        await page.waitForSelector(promptTextareaSelector, { visible: true, timeout: 60000 });
+        let found = false;
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                await page.waitForSelector('textarea', { visible: true, timeout: 30000 });
+                found = true;
+                break;
+            } catch {
+                console.log(`Attempt ${attempt + 1} failed. Retrying...`);
+                await page.reload({ waitUntil: 'domcontentloaded' });
+            }
+        }
+        if (!found) throw new Error("Prompt textarea never appeared.");
 
         console.log('⌨️ Typing prompt...');
-        await page.type(promptTextareaSelector, promptToAsk, { delay: 50 });
+        await page.type('textarea', promptToAsk, { delay: 50 });
 
         console.log('⏎ Submitting prompt...');
         await page.keyboard.press('Enter');

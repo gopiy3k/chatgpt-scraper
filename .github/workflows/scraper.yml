@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22'
 
-      # This is the correct, reliable way to install Chrome
+      # This is the correct, reliable way to install Chrome and its dependencies
       - name: Install Google Chrome
         uses: browser-actions/setup-chrome@v1
         with:
@@ -32,9 +32,9 @@ jobs:
       - name: Run the scraper script
         run: node scrapeChatGPT.mjs
         env:
-          # Pass secrets directly to the script
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CHATGPT_SESSION: ${{ secrets.CHATGPT_SESSION }}
-          # This is crucial: it tells Puppeteer where to find the Chrome we just installed
+          PROMPT_TO_ASK: ${{ secrets.PROMPT_TO_ASK }}
+          # This tells Puppeteer where to find the Chrome installed by the action
           PUPPETEER_EXECUTABLE_PATH: ${{ env.CHROME_PATH }}
